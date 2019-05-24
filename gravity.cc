@@ -1,12 +1,3 @@
-/*##############################################
-##                                            ##
-##  Program: Gravity simulation               ##
-##  Author: Curcudel Eugen (GuessGen)         ##
-##  E-mail: CurcudelEugen@gmail.com           ##
-##  WebSite: http://GuessGen.wordpress.com    ##
-##                                            ##
-##############################################*/
-
 #ifdef __APPLE__
 #  include <OpenGL/gl.h>
 #  include <OpenGL/glu.h>
@@ -16,7 +7,7 @@
 #  include <GL/glu.h>
 #  include <GL/glut.h>
 #endif
-
+//#include<openglut..h>
 #include <iostream>
 #include <vector>
 #include <deque>
@@ -59,12 +50,13 @@ void keyboard(unsigned char, int, int);
 int Mx, My, WIN;
 bool PRESSED_LEFT = false, PRESSED_RIGHT = false,
      PRESSED_MIDDLE = false, SPEED_PARTICLES = false;
-
+int a=1,s=0;
 std::vector<Particle> particles;
 
 //{{{ main
 int main(int argc, char **argv)
 {
+	
 	Particle p;
 	//initial centered Huge mass particle
 	p.x = 0;
@@ -156,12 +148,22 @@ void timer(int)
 
 	glutTimerFunc(1, timer, 0);
 }
+void drawText(float x,float y,char *s)
+{
+	glColor3f(1.0,1.0,1.0);
+	int i;
+	glRasterPos2f(x,y);
+	for(i=0;s[i]!='\0';i++)
+		glutBitmapCharacter(GLUT_BITMAP_HELVETICA_12,s[i]);
+}	
 //}}}
 //{{{ display
 void display()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-
+	
+if(a==0){
+	glClearColor(0.0,0.0,0.0,0.0);
 	//draw the drag line
 	glColor3f(1, 1, 0);
 	glBegin(GL_LINES);
@@ -187,9 +189,50 @@ void display()
       glVertex2i(p.trail.at(t).x, p.trail.at(t).y);
     glEnd();
 	}
-
+	//display menu
+	drawText(150,-110,"Tap anywhere on the screen");
+	drawText(150,-130,"Tap left mouse button to create star");
+	drawText(150,-150,"Tap right mouse button to create planet");
+	drawText(150,-170,"Tap middle mouse button to clear screen");
+	drawText(150,-190,"Tap 's' on keyboard to toggle speed mode");	
+	if(s==0)
+		drawText(150,-210,"Speed mode is off");
+	else
+		drawText(150,-210,"Speed mode is on");	
 	glFlush();
 	glutSwapBuffers();
+	}
+else{
+
+glClearColor(0.2, 0.8, 0.8, 0.0);
+glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+glColor3f(1.0, 1.0, 0.5);
+//continue option
+drawText(-380, -90, "Press C to continue");
+//Team Members
+drawText(-10, -90, "Team Members:");
+drawText(-20, -60, "1. Vivek K (USN: 1BI16CS067)");
+drawText(-20, -40, "2. Sourav Pai (USN: 1BI16CS059)");
+
+//guidance
+drawText(-250, -90, "Under the guidance of:");
+drawText(-250, -60, "Prof. D. R. Nagamani");
+drawText(-250, -40, "Prof. Sobha ");
+drawText(-250, -20, "Prof. N. Thanuja");
+drawText(-250, -0, "Prof. Chaitra C. K. ");
+
+glColor3f(1.0, 1.0, 1.0);
+//Topic
+//print(200, 350, "WAR AND PEACE");
+drawText(-150,-190, "Bangalore institute of Technology");
+drawText(-150, -170, "Department of Computer Science and Engineering"); 
+drawText(-150, -150, "Project Theme: Human nature Interaction");
+drawText(-150, -130, "Project Title: Gravity Simulation on stars and planets");
+
+glFlush();
+glutSwapBuffers();
+}
+
 }
 //}}}
 //{{{ mouse
@@ -282,12 +325,20 @@ void keyboard(unsigned char key, int x, int y)
 	{
 		case 's':
 			SPEED_PARTICLES = !SPEED_PARTICLES;
-			printf("particles speeded up");
+			if(s==0)
+				s=1;
+			else
+				s=0;
+			//printf("particles speeded up");
 			break;	
 		case 27:
 			removeParticles();
 			glutDestroyWindow(WIN);
 			exit(0);
+			break;
+		case 'c':
+			a=0;
+			glutPostRedisplay();
 			break;
 	}
 }
